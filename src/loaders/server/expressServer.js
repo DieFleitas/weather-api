@@ -1,6 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
+const swaggerUi = require("swagger-ui-express");
 const config = require("../../config");
+const logger = require("../logger");
 
 class ExpressServer {
   constructor() {
@@ -9,8 +11,12 @@ class ExpressServer {
     this.basePath = config.api.prefix;
 
     this._middlewares();
-
+    this._swaggerConfig();
+    
     this._routes();
+
+    this._notFound();
+    this._errorHandler();
   }
 
   _middlewares() {
@@ -25,10 +31,39 @@ class ExpressServer {
     this.app.use(`${this.basePath}/users`, require("../../routes/users.js"));
   }
 
+  _notFound() {
+    this.app.use((req, res, next) => {
+      const err = new Error("Not found");
+      err.code = 404;
+      next(err);
+    });
+  }
+
+  _errorHandler() {
+    this.app.use((err, req, res, next) => {
+      const code = err.code || 500;
+      const body = {
+        error: {
+          code,
+          message: err.message,
+        },
+      };
+      res.status(code).json(body);
+    });
+  }
+
+  _swaggerConfig() {
+    this.app.use(
+      config.swagger.path,
+      swaggerUi.serve,
+      swaggerUi.setup(require("../swagger/swagger.json"))
+    );
+  }
+
   async start() {
     this.app.listen(this.port, (error) => {
       if (error) {
-        console.log(error);
+        logger.error(error);
         process.exit(1);
         return;
       }
