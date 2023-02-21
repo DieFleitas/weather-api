@@ -28,7 +28,9 @@ class ExpressServer {
     this.app.head("/status", (req, res) => {
       res.status(200).end();
     });
-    this.app.use(`${this.basePath}/users`, require("../../routes/users.js"));
+    this.app.use(`${this.basePath}/weather`, require("../../routes/weather.js"));
+    this.app.use(`${this.basePath}/cities`, require("../../routes/cities.js"));
+
   }
 
   _notFound() {

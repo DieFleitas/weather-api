@@ -1,1 +1,1 @@
-# Rest server
+# Weather API
