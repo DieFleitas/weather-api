@@ -10,14 +10,14 @@ const {
  * @param {express.Request} req
  * @param {express.Response} res
  */
-const weatherByCoordinates = async (req, res) => {
+const weatherByCoordinates = async (req, res, next) => {
   try {
     const { lon, lat } = req.query;
     const weather = await weatherByCoordinatesService(lon, lat);
     const success = new Success(weather);
     res.json(success);
   } catch (error) {
-    throw error;
+    next(error);
   }
 };
 
@@ -26,14 +26,14 @@ const weatherByCoordinates = async (req, res) => {
  * @param {express.Request} req
  * @param {express.Response} res
  */
-const weatherByCityId = async (req, res) => {
+const weatherByCityId = async (req, res, next) => {
   try {
     const { city, id } = req.params;
     const weather = await weatherByCityIdService(city, id);
     const success = new Success(weather);
     res.json(success);
   } catch (error) {
-    throw error;
+    next(error);
   }
 };
 

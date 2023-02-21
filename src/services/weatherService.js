@@ -22,12 +22,12 @@ const weatherByCityId = async (city, id) => {
   try {
     const cities = await cityRepository.findCities(city);
 
-    const cityData = cities.features.filter((element) => {
+    const cityData = cities.features.find((element) => {
       return element.id === id;
     });
 
-    const lon = cityData[0].geometry.coordinates[0];
-    const lat = cityData[0].geometry.coordinates[1];
+    const lon = cityData.geometry.coordinates[0];
+    const lat = cityData.geometry.coordinates[1];
 
     return await weatherByCoordinates(lon, lat);
   } catch (error) {
